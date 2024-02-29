@@ -1,14 +1,37 @@
+type AccountCode {
+  id: Int!
+  regCode: String
+  resetCode: String
+  user: User!
+}
+
+input ChangePasswordInput {
+  currentPassword: String!
+  email: String!
+  newPassword: String!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
+input ForgotPasswordInput {
+  email: String!
+}
+
 type Mutation {
+  changePassword(data: ChangePasswordInput!): User!
   createDraft(authorEmail: String!, data: PostCreateInput!): Post!
   deletePost(id: Int!): Post!
+  forgotPassword(data: ForgotPasswordInput!): User!
   incrementPostViewCount(id: Int!): Post!
+  resendSignupCode(data: ResendSignupCodeInput!): User!
+  setPassword(data: SetPasswordInput!): User!
   signupUser(data: UserCreateInput!): User!
   togglePublishPost(id: Int!): Post!
+  verifyForgotPassword(data: VerifyForgotPasswordInput!): User!
+  verifySignup(data: VerifyUserInput!): User!
 }
 
 type Post {
@@ -31,11 +54,29 @@ input PostOrderByUpdatedAtInput {
   updatedAt: SortOrder!
 }
 
+type Profile {
+  bio: String
+  id: Int!
+  user: User!
+}
+
 type Query {
-  allUsers: [User!]!
+  allCode(searchString: String): [AccountCode!]
+  allUsers(orderBy: UserOrderByUpdatedAtInput, searchString: String, skip: Int, take: Int): [User!]!
   draftsByUser(userUniqueInput: UserUniqueInput!): [Post!]
   feed(orderBy: PostOrderByUpdatedAtInput, searchString: String, skip: Int, take: Int): [Post!]!
   postById(id: Int!): Post
+  userById(id: Int!): User
+}
+
+input ResendSignupCodeInput {
+  email: String!
+}
+
+input SetPasswordInput {
+  confirmPassword: String!
+  email: String!
+  password: String!
 }
 
 enum SortOrder {
@@ -47,7 +88,7 @@ type User {
   email: String!
   id: Int!
   name: String
-  posts: [Post!]!
+  profile: Profile
 }
 
 input UserCreateInput {
@@ -56,7 +97,21 @@ input UserCreateInput {
   posts: [PostCreateInput!]
 }
 
+input UserOrderByUpdatedAtInput {
+  updatedAt: SortOrder!
+}
+
 input UserUniqueInput {
   email: String
   id: Int
+}
+
+input VerifyForgotPasswordInput {
+  email: String!
+  resetCode: String!
+}
+
+input VerifyUserInput {
+  email: String!
+  regCode: String!
 }

@@ -1,5 +1,6 @@
 import { builder } from '../builder'
 import { prisma } from '../db'
+import { SortOrder } from './shared'
 import { UserUniqueInput } from './user'
 
 builder.prismaObject('Post', {
@@ -20,10 +21,6 @@ export const PostCreateInput = builder.inputType('PostCreateInput', {
     title: t.string({ required: true }),
     content: t.string(),
   }),
-})
-
-const SortOrder = builder.enumType('SortOrder', {
-  values: ['asc', 'desc'] as const,
 })
 
 const PostOrderByUpdatedAtInput = builder.inputType(
@@ -64,11 +61,11 @@ builder.queryFields((t) => ({
     resolve: (query, parent, args) => {
       const or = args.searchString
         ? {
-            OR: [
-              { title: { contains: args.searchString } },
-              { content: { contains: args.searchString } },
-            ],
-          }
+          OR: [
+            { title: { contains: args.searchString } },
+            { content: { contains: args.searchString } },
+          ],
+        }
         : {}
 
       return prisma.post.findMany({
@@ -144,7 +141,7 @@ builder.mutationFields((t) => ({
     resolve: async (query, parent, args) => {
       // Toggling become simpler once this bug is resolved: https://github.com/prisma/prisma/issues/16715
       const postPublished = await prisma.post.findUnique({
-        where: { id: args.id},
+        where: { id: args.id },
         select: { published: true }
       })
       console.log(postPublished)

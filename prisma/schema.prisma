@@ -12,23 +12,56 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  Profile Profile?
+  id               Int          @id @default(autoincrement())
+  secret           String       @default("")
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @default(now()) @updatedAt
+  isActive         Boolean      @default(false)
+  isRegistered     Boolean      @default(false)
+  isVerified       Boolean      @default(false)
+  isBrand          Boolean      @default(false)
+  isBlacklisted    Boolean      @default(false)
+  email            String       @unique
+  name             String?
+  password         String?
+  posts            Post[]
+  profile          Profile?
+  accountCode      AccountCode?
+  lastResendCodeAt DateTime?
 }
 
 model Profile {
-  id        Int     @id @default(autoincrement())
-  phoneNo   String?
-  userName  String?
-  firstName String?
-  lastName  String?
-  address   String?
-  bio       String?
-  user      User    @relation(fields: [userId], references: [id])
-  userId    Int     @unique
+  id                   Int       @id @default(autoincrement())
+  phoneNo              String?
+  userName             String?
+  userNameRegular      String?
+  userNameProfessional String?
+  userNameSocial       String?
+  userNameGamer        String?
+  userNameAnonymous    String?
+  firstName            String?
+  lastName             String?
+  address              String?
+  bio                  String?
+  bioTags              String?
+  dateOfBirth          DateTime?
+  country              String?
+  countryCode          String?
+  state                String?
+  city                 String?
+  zipCode              String?
+  user                 User      @relation(fields: [userId], references: [id])
+  userId               Int       @unique
+}
+
+model AccountCode {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  regCode   String?
+  resetCode String?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @unique
 }
 
 model Post {
