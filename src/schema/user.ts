@@ -18,7 +18,7 @@ const alphabet = '346789ABCDEFGHJKLMNPQRTUVWXY';
 
 builder.prismaObject('User', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
+    id: t.exposeString('id'),
     name: t.exposeString('name', { nullable: true }),
     email: t.exposeString('email'),
     // posts: t.relation('posts'),
@@ -28,7 +28,7 @@ builder.prismaObject('User', {
 
 builder.prismaObject('Profile', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
+    id: t.exposeString('id'),
     bio: t.exposeString('bio', { nullable: true }),
     user: t.relation('user'),
   }),
@@ -36,7 +36,7 @@ builder.prismaObject('Profile', {
 
 builder.prismaObject('AccountCode', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
+    id: t.exposeString('id'),
     regCode: t.exposeString('regCode', { nullable: true }),
     resetCode: t.exposeString('resetCode', { nullable: true }),
     user: t.relation('user'),
@@ -155,7 +155,7 @@ builder.queryFields((t) => ({
     type: 'User',
     nullable: true,
     args: {
-      id: t.arg.int({ required: true }),
+      id: t.arg.string({ required: true }),
     },
     resolve: (query, parent, args) => prisma.user.findUnique({
       ...query,
@@ -214,7 +214,8 @@ builder.mutationFields((t) => ({
       // nanoid() //=> "HJECJLTR"
       // console.log(nanoid());
       const currentTime = new Date().toJSON();
-      const regCode = RegistrationCode.sign(`${args.data.email}${currentTime}`, secret);
+      const regCode = RegistrationCode.sign(`${args.data.name}`, secret);
+      console.log(typeof regCode);
       console.log(regCode);
       const emailMessage = welcomeEmail({ name: args.data.email, regCode: regCode });
       await sendEmail(args.data.email, 'Welcome to Profile', emailMessage);

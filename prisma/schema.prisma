@@ -6,13 +6,18 @@ generator pothos {
   provider = "prisma-pothos-types"
 }
 
+// datasource db {
+//   provider = "sqlite"
+//   url      = "file:./dev.db"
+// }
+
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "mongodb"
+  url      = env("MONGODB_URL_FULL")
 }
 
 model User {
-  id               Int          @id @default(autoincrement())
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId type
   secret           String       @default("")
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @default(now()) @updatedAt
@@ -31,7 +36,8 @@ model User {
 }
 
 model Profile {
-  id                   Int       @id @default(autoincrement())
+  // id                   Int       @id @default(autoincrement())
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
   phoneNo              String?
   userName             String?
   userNameRegular      String?
@@ -51,21 +57,21 @@ model Profile {
   city                 String?
   zipCode              String?
   user                 User      @relation(fields: [userId], references: [id])
-  userId               Int       @unique
+  userId               String    @unique @map("user") @db.ObjectId
 }
 
 model AccountCode {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   regCode   String?
   resetCode String?
   user      User     @relation(fields: [userId], references: [id])
-  userId    Int      @unique
+  userId    String   @unique @map("user") @db.ObjectId
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title     String
@@ -73,5 +79,5 @@ model Post {
   published Boolean  @default(false)
   viewCount Int      @default(0)
   author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  authorId  String?  @map("author") @db.ObjectId
 }
