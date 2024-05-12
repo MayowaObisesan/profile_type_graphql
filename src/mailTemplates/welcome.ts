@@ -18,6 +18,7 @@ export const welcomeEmail = (data: { name: string; regCode: string }) => {
 };
 
 export const sendWelcomeMail = async (emailData: EmailData) => {
+  console.log(emailData);
   const emailMessage = welcomeEmail({ name: emailData.email, regCode: emailData.code });
   await sendEmail(emailData.email, 'Welcome to Profile', emailMessage);
 }

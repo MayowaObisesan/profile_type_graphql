@@ -1,5 +1,5 @@
 type AccountCode {
-  id: Int!
+  id: String!
   regCode: String
   resetCode: String
   user: User!
@@ -56,7 +56,7 @@ input PostOrderByUpdatedAtInput {
 
 type Profile {
   bio: String
-  id: Int!
+  id: String!
   user: User!
 }
 
@@ -66,7 +66,7 @@ type Query {
   draftsByUser(userUniqueInput: UserUniqueInput!): [Post!]
   feed(orderBy: PostOrderByUpdatedAtInput, searchString: String, skip: Int, take: Int): [Post!]!
   postById(id: Int!): Post
-  userById(id: Int!): User
+  userById(id: String!): User
 }
 
 input ResendSignupCodeInput {
@@ -86,7 +86,7 @@ enum SortOrder {
 
 type User {
   email: String!
-  id: Int!
+  id: String!
   name: String
   profile: Profile
 }
